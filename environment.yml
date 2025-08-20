@@ -1,0 +1,12 @@
+name: pinardi
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - reportlab
+  - pip
+  - pip:
+      - streamlit
+      - pandas
+      - ortools
+      - pyyaml

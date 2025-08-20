@@ -1,0 +1,65 @@
+93150:
+  descripcion: "Marco Horizontal Superior - 2 rieles"
+  precio: 50.0
+  largo: 6000
+93151:
+  descripcion: "Marco Horizontal inferior caja de agua - 2 rieles"
+  precio: 70.0
+  largo: 6000
+93152:
+  descripcion: "Marco Horizontal inferior caja de agua - 2 rieles"
+  precio: 90.0
+  largo: 6000
+93005:
+  descripcion: "Hoja Horizontal Inferior y/o Superior para VS"
+  precio: 15.0
+  largo: 6000
+45032:
+  descripcion: "Hoja Horizontal Inferior y/o Superior (63mm) para DVH"
+  precio: 18.0
+  largo: 6000
+45036:
+  descripcion: "Hoja Horizontal Inferior y/o Superior (100mm) para DVH"
+  precio: 20.0
+  largo: 6000
+93007:
+  descripcion: "Hoja Lateral para VS"
+  precio: 12.0
+  largo: 6000
+45031:
+  descripcion: "Hoja Lateral para DVH"
+  precio: 14.0
+  largo: 6000
+93012:
+  descripcion: "Hoja Lateral Reforzada para DVH"
+  precio: 16.0
+  largo: 6000
+93009:
+  descripcion: "Hoja Enganche Central para VS"
+  precio: 25.0
+  largo: 6000
+45033:
+  descripcion: "Hoja Enganche Central para DVH"
+  precio: 28.0
+  largo: 6000
+93016:
+  descripcion: "Hoja Enganche Central Reforzada para VS"
+  precio: 30.0
+  largo: 6000
+93043:
+  descripcion: "Hoja Enganche Central Reforzada para DVH"
+  precio: 32.0
+  largo: 6000
+93042:
+  descripcion: "Hoja Enganche Central Reforzada para DVH"
+  precio: 35.0
+  largo: 6000
+93041:
+  descripcion: "Hoja Enganche Central Reforzada para DVH"
+  precio: 38.0
+  largo: 6000
+93053:
+  descripcion: "Marco Lateral - 2 rieles"
+  precio: 5.0
+  largo: 6000
+
