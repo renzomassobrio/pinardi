@@ -32,6 +32,8 @@ tab1, tab2, tab3 = st.tabs(["🛒 Armar pedido", "📋 Presupuesto individual", 
 # --- TAB 1: Configurator ---
 with tab1:
 
+    st.subheader("Configuración del producto")
+    
     # Description input
     description = st.text_input("Ingresar un nombre para el producto", placeholder="p.ej. ventana dormitorio")
     
@@ -50,38 +52,46 @@ with tab1:
     #    st.session_state.selection = {}
     #    st.session_state.last_product_index = selected_index
         
-    st.text("⚙️ Configuración del producto")
+    st.text("⚙️ Configuración de opciones")
 
-    # Dynamic dropdowns
+   # Dynamic dropdowns
     available = get_available_decisions(product, st.session_state.selection)
+
     for nombre, opciones in available.items():
         current_value = st.session_state.selection.get(nombre)
-        options_labels = {str(opt): f"{opt} - {parts[opt]['descripcion']}" for opt in opciones}
+        options_labels = {
+            str(opt): f"{opt} - {parts[opt]['descripcion']}" 
+            for opt in opciones
+        }
 
         chosen = st.selectbox(
             f"{nombre}",
             options=[""] + list(options_labels.keys()),
             format_func=lambda x: options_labels.get(x, "") if x else "Seleccionar...",
-            index=([""] + list(options_labels.keys())).index(str(current_value)) if current_value else 0,
-            key=f"select_{nombre}"
+            key=f"select_{nombre}",
+            index=0  # default to "Seleccionar..." if no prior choice
         )
 
         if chosen:
             st.session_state.selection[nombre] = int(chosen)
+            
+    # ✅ Validation check: make sure ALL dropdowns have a selection
+    all_selected = all(st.session_state.selection.get(nombre) for nombre in available.keys())
 
     # Add to basket
-    if st.button("➕ Agregar al pedido"):
+    if st.button("🛒➕ Agregar al pedido"):
         if (not description):
-            st.warning("Debe ingresar un nombre para el producto.")
+            st.warning("⚠️ Debe ingresar un nombre para el producto.")
         elif any(d["description"] == description for d in st.session_state.basket):
-            st.warning("El nombre del producto ya está en uso.")
+            st.warning("⚠️ El nombre del producto ya está en uso.")
         elif ancho==0:
-            st.warning("El ancho debe ser mayor a cero.")
+            st.warning("⚠️ El ancho debe ser mayor a cero.")
         elif alto==0:
-            st.warning("El alto debe ser mayor a cero.")
+            st.warning("⚠️ El alto debe ser mayor a cero.")
         elif not st.session_state.selection:
-            print(ancho)
-            st.warning("Debe configurar el producto primero.")
+            st.warning("⚠️ Debe configurar el producto primero.")
+        elif not all_selected:
+            st.warning("⚠️ Selecciona una opción en todos los menús desplegables antes de continuar.")
         else:
             st.session_state.basket.append({
                 "description": description,
@@ -91,7 +101,7 @@ with tab1:
                 "selection": st.session_state.selection.copy()
             })
             st.session_state.selection = {}  # reset after adding
-            st.success("Producto agregado al pedido!")
+            st.success("✅ Producto agregado al pedido!")
 
     # Show basket
     if st.session_state.basket:
@@ -147,32 +157,43 @@ with tab2:
         for k,v in to_cut.items():
             v["stock_length"]=parts[k]["largo"]
     
-        # Llamar al optimizador de cortes
-        res_cuts=[]
-        for k,v in to_cut.items():
-            res=cutting_stock_with_kerf(v["stock_length"],v["pieces"],kerf=16) # Ajustar el valor de ancho de la hoja de corte
-            res_cuts.append({"codigo":k,
-                            "total_barras":len(res),
-                            "cortes":res})
+        piezas_invalidas=False
+        for k, v in to_cut.items():
+            if any(p > v["stock_length"] for p in v["pieces"]):
+                piezas_invalidas=True
+                
+        if piezas_invalidas:
+            st.warning("⚠️ Hay piezas a cortar mayores al largo de la barra.")
+        else:
+            # Llamar al optimizador de cortes
+            res_cuts=[]
+            for k,v in to_cut.items():
+                res=cutting_stock_with_kerf(v["stock_length"],v["pieces"],kerf=16) # Ajustar el valor de ancho de la hoja de corte
+                res_cuts.append({"codigo":k,
+                                "total_barras":len(res),
+                                "cortes":res})
+                
+            df_cuts=pd.DataFrame(res_cuts)
+            st.dataframe(df_cuts, use_container_width=True)
+
+            st.header("💰 Presupuesto")
+
+            df_presupuesto=df_cuts.copy()
+            df_presupuesto.drop(columns="cortes",inplace=True)  
+            df_presupuesto["precio_por_barra"]=df_presupuesto.apply(lambda row: parts[row["codigo"]]["precio"], axis=1)
+            df_presupuesto["subtotal"]=df_presupuesto["total_barras"]*df_presupuesto["precio_por_barra"]   
+            total=df_presupuesto["subtotal"].sum()      
+            st.dataframe(df_presupuesto, use_container_width=True)
+            st.write(f"**💰 Total: {total:.2f}**")
             
-        df_cuts=pd.DataFrame(res_cuts)
-        st.dataframe(df_cuts, use_container_width=True)
+            pdf_presupuesto = create_pdf(df_presupuesto, title="Presupuesto individual", total_cost=total)
+            st.download_button(
+                label="📄 Descargar PDF",
+                data=pdf_presupuesto,
+                file_name="report.pdf",
+                mime="application/pdf"
+            )
 
-        st.header("💰 Presupuesto")
-
-        df_presupuesto=df_cuts.copy()
-        df_presupuesto.drop(columns="cortes",inplace=True)  
-        df_presupuesto["precio_por_barra"]=df_presupuesto.apply(lambda row: parts[row["codigo"]]["precio"], axis=1)
-        df_presupuesto["subtotal"]=df_presupuesto["total_barras"]*df_presupuesto["precio_por_barra"]   
-        total=df_presupuesto["subtotal"].sum()      
-        st.dataframe(df_presupuesto, use_container_width=True)
-        st.write(f"**💰 Total: {total:.2f}**")
-        
-        pdf_presupuesto = create_pdf(df_presupuesto, title="Presupuesto individual")
-        st.download_button(
-            label="📄 Descargar PDF",
-            data=pdf_presupuesto,
-            file_name="report.pdf",
-            mime="application/pdf"
-        )
-
+#####
+with tab3:
+    st.title("🛠️ En construcción")
