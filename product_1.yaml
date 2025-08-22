@@ -52,13 +52,3 @@ rules:
       - type: "update_measure"
         target: "Eleccion de hoja central"
         value: "H-138"
-  - condition:
-      selection: {"Eleccion de hoja horizontal": "93005"}
-    actions:
-      - type: "force_selection"
-        target: "Eleccion de hoja lateral"
-        option: "93007"
-      - type: "disable_option"
-        target: "Eleccion de hoja central"
-        option: "45033"
-

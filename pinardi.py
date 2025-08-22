@@ -195,5 +195,96 @@ with tab2:
             )
 
 #####
-with tab3:
-    st.title("🛠️ En construcción")
+with tab3:      
+    if not st.session_state.basket:
+        st.info("No hay productos en el pedido aún.")
+    else:
+        st.header("🛒 Seleccione productos del pedido")
+        
+        # Lista de checkboxes para elegir productos
+        selected_indices = []
+        for i, item in enumerate(st.session_state.basket):
+            if st.checkbox(item["description"], key=f"basket_item_{i}"):
+                selected_indices.append(i)
+
+        if not selected_indices:
+            st.info("Seleccione al menos un producto para continuar.")
+        else:
+            # 🔹 Construir BOM combinado con columna de producto (sin agrupar)
+            all_boms = []
+            for idx in selected_indices:
+                selected_item = st.session_state.basket[idx]
+                bom = build_bom(
+                    selected_item["selection"], 
+                    selected_item["product"], 
+                    parts, 
+                    selected_item["ancho"], 
+                    selected_item["alto"]
+                )
+                for row in bom:
+                    row["producto"] = selected_item["description"]  # ➕ agregar producto
+                all_boms.extend(bom)
+
+            df_partes = pd.DataFrame(all_boms)
+
+            st.header("🛠️ Lista de partes")
+            df_partes = df_partes[["producto", "codigo", "descripcion", "especificacion_medida", "medida_calculada", "cantidad"]]
+            st.dataframe(df_partes, use_container_width=True)
+
+            st.header("📏 Cálculo de cortes")
+
+            # Crear diccionario de piezas a cortar (sí combinamos para cortes)
+            to_cut = {}
+            for _, row in df_partes.iterrows():
+                to_cut.setdefault(row['codigo'], {'pieces': []})
+                to_cut[row['codigo']]['pieces'].extend([row['medida_calculada']] * row['cantidad'])
+
+            # Agregar el largo de cada barra
+            for k, v in to_cut.items():
+                v["stock_length"] = parts[k]["largo"]
+
+            # Verificar piezas inválidas
+            piezas_invalidas = any(
+                any(p > v["stock_length"] for p in v["pieces"])
+                for v in to_cut.values()
+            )
+
+            if piezas_invalidas:
+                st.warning("⚠️ Hay piezas a cortar mayores al largo de la barra.")
+            else:
+                # Llamar al optimizador de cortes
+                res_cuts = []
+                for k, v in to_cut.items():
+                    res = cutting_stock_with_kerf(
+                        v["stock_length"], v["pieces"], kerf=16
+                    )
+                    res_cuts.append({
+                        "codigo": k,
+                        "total_barras": len(res),
+                        "cortes": res
+                    })
+
+                df_cuts = pd.DataFrame(res_cuts)
+                st.dataframe(df_cuts, use_container_width=True)
+
+                st.header("💰 Presupuesto")
+
+                df_presupuesto = df_cuts.copy()
+                df_presupuesto.drop(columns="cortes", inplace=True)  
+                df_presupuesto["precio_por_barra"] = df_presupuesto.apply(
+                    lambda row: parts[row["codigo"]]["precio"], axis=1
+                )
+                df_presupuesto["subtotal"] = df_presupuesto["total_barras"] * df_presupuesto["precio_por_barra"]   
+                total = df_presupuesto["subtotal"].sum()      
+
+                st.dataframe(df_presupuesto, use_container_width=True)
+                st.write(f"**💰 Total: {total:.2f}**")
+
+                pdf_presupuesto = create_pdf(df_presupuesto, title="Presupuesto", total_cost=total)
+                st.download_button(
+                    label="📄 Descargar PDF",
+                    data=pdf_presupuesto,
+                    file_name="presupuesto.pdf",
+                    mime="application/pdf"
+                )
+
