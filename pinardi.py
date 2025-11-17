@@ -184,107 +184,106 @@ with tab3:
     # -------------------------------------------------------------
     # PERFILES
     # -------------------------------------------------------------
-    st.header("Lista de perfiles")
+    with st.expander("Lista de perfiles"):
 
-    all_boms_perfiles = []
-    for idx in selected_indices:
-        selected_item = st.session_state.basket[idx]
+        all_boms_perfiles = []
+        for idx in selected_indices:
+            selected_item = st.session_state.basket[idx]
 
-        # Recover product
-        product = get_product_by_name(selected_item["product_name"], products)
+            # Recover product
+            product = get_product_by_name(selected_item["product_name"], products)
 
-        bom = build_bom_perfiles(
-            selected_item["selection"], 
-            product, 
-            parts, 
-            selected_item["ancho"], 
-            selected_item["alto"]
-        )
-        
-        for row in bom:
-            row["producto"] = selected_item["description"]
-            row["cantidad"] = row["cantidad"] * selected_item["cantidad"]
-        
-        all_boms_perfiles.extend(bom)
+            bom = build_bom_perfiles(
+                selected_item["selection"], 
+                product, 
+                parts, 
+                selected_item["ancho"], 
+                selected_item["alto"]
+            )
+            
+            for row in bom:
+                row["producto"] = selected_item["description"]
+                row["cantidad"] = row["cantidad"] * selected_item["cantidad"]
+            
+            all_boms_perfiles.extend(bom)
 
-    df_perfiles = pd.DataFrame(all_boms_perfiles)
-    df_perfiles = df_perfiles[["producto", "codigo", "descripcion", "especificacion_medida", "medida_calculada", "cantidad"]]
-    st.dataframe(df_perfiles, use_container_width=True)
+        df_perfiles = pd.DataFrame(all_boms_perfiles)
+        df_perfiles = df_perfiles[["producto", "codigo", "descripcion", "especificacion_medida", "medida_calculada", "cantidad"]]
+        st.dataframe(df_perfiles, use_container_width=True)
 
     # -------------------------------------------------------------
     # CALCULO DE CORTES
     # -------------------------------------------------------------
-    st.header("Cálculo de cortes")
+    with st.expander("Cálculo de cortes"):
 
-    to_cut = {}
-    for _, row in df_perfiles.iterrows():
-        to_cut.setdefault(row["codigo"], {"pieces": []})
-        to_cut[row["codigo"]]["pieces"].extend([row["medida_calculada"]] * row["cantidad"])
+        to_cut = {}
+        for _, row in df_perfiles.iterrows():
+            to_cut.setdefault(row["codigo"], {"pieces": []})
+            to_cut[row["codigo"]]["pieces"].extend([row["medida_calculada"]] * row["cantidad"])
 
-    for k, v in to_cut.items():
-        v["stock_length"] = parts[k]["largo"]
+        for k, v in to_cut.items():
+            v["stock_length"] = parts[k]["largo"]
 
-    piezas_invalidas = any(
-        any(p > v["stock_length"] for p in v["pieces"])
-        for v in to_cut.values()
-    )
+        piezas_invalidas = any(
+            any(p > v["stock_length"] for p in v["pieces"])
+            for v in to_cut.values()
+        )
 
-    if piezas_invalidas:
-        st.warning("⚠️ Hay piezas a cortar mayores al largo de la barra.")
-        st.stop()
+        if piezas_invalidas:
+            st.warning("⚠️ Hay piezas a cortar mayores al largo de la barra.")
+            st.stop()
 
-    res_cuts = []
-    for k, v in to_cut.items():
-        bars, leftovers = cutting_stock_with_kerf(v["stock_length"], v["pieces"], kerf=kerf)
-        res_cuts.append({
-            "codigo": k,
-            "total_barras": len(bars),
-            "detalle": [
-                {"Barra #": i+1, "Cortes": bars[i], "Sobrante": leftovers[i]}
-                for i in range(len(bars))
-            ]
-        })
-
-    rows = []
-    for res in res_cuts:
-        for d in res["detalle"]:
-            rows.append({
-                "Código": res["codigo"],
-                "Barra #": d["Barra #"],
-                "kg/m": parts[res["codigo"]]["kg/m"],
-                "Cortes": ", ".join(str(c) for c in d["Cortes"]),
-                "mm. usados": sum(d["Cortes"]),
-                "kg. usados": (sum(d["Cortes"])/1000) * parts[res["codigo"]]["kg/m"],
-                "mm. sobrantes": d["Sobrante"],
-                "kg. sobrantes": (d["Sobrante"]/1000) * parts[res["codigo"]]["kg/m"]
+        res_cuts = []
+        for k, v in to_cut.items():
+            bars, leftovers = cutting_stock_with_kerf(v["stock_length"], v["pieces"], kerf=kerf)
+            res_cuts.append({
+                "codigo": k,
+                "total_barras": len(bars),
+                "detalle": [
+                    {"Barra #": i+1, "Cortes": bars[i], "Sobrante": leftovers[i]}
+                    for i in range(len(bars))
+                ]
             })
 
-    df_cuts_flat = pd.DataFrame(rows).sort_values(["Código", "Barra #"])
+        rows = []
+        for res in res_cuts:
+            for d in res["detalle"]:
+                rows.append({
+                    "Código": res["codigo"],
+                    "Barra #": d["Barra #"],
+                    "kg/m": parts[res["codigo"]]["kg/m"],
+                    "Cortes": ", ".join(str(c) for c in d["Cortes"]),
+                    "mm. usados": sum(d["Cortes"]),
+                    "kg. usados": (sum(d["Cortes"])/1000) * parts[res["codigo"]]["kg/m"],
+                    "mm. sobrantes": d["Sobrante"],
+                    "kg. sobrantes": (d["Sobrante"]/1000) * parts[res["codigo"]]["kg/m"]
+                })
 
-    kg_comprados = 0
-    for codigo, group in df_cuts_flat.groupby("Código"):
-        st.write(
-            f"**{codigo} - {parts[codigo]['descripcion']}**  \n"
-            f"total barras: {len(group)} | usados: {group['mm. usados'].sum():.0f} (mm) - "
-            f"{group['kg. usados'].sum():.2f} (kg) | sobrantes: {group['mm. sobrantes'].sum():.0f} (mm) - "
-            f"{group['kg. sobrantes'].sum():.2f} (kg)"
+        df_cuts_flat = pd.DataFrame(rows).sort_values(["Código", "Barra #"])
+
+        kg_comprados = 0
+        for codigo, group in df_cuts_flat.groupby("Código"):
+            st.write(
+                f"**{codigo} - {parts[codigo]['descripcion']}**  \n"
+                f"total barras: {len(group)} | usados: {group['mm. usados'].sum():.0f} (mm) - "
+                f"{group['kg. usados'].sum():.2f} (kg) | sobrantes: {group['mm. sobrantes'].sum():.0f} (mm) - "
+                f"{group['kg. sobrantes'].sum():.2f} (kg)"
+            )
+            st.dataframe(group.drop(columns="Código").round(2), use_container_width=True, hide_index=True)
+            kg_comprados += len(group) * parts[codigo]["kg/m"] * (parts[codigo]["largo"]/1000)
+
+        ### PDF DE LISTA DE CORTES ###
+        pdf_buffer = generate_pdf(
+            df_cuts_flat=df_cuts_flat[["Código", "Barra #", "Cortes"]],
+            parts=parts,
         )
-        st.dataframe(group.drop(columns="Código").round(2), use_container_width=True, hide_index=True)
-        kg_comprados += len(group) * parts[codigo]["kg/m"] * (parts[codigo]["largo"]/1000)
-
-    ### PDF DE LISTA DE CORTES ###
-    pdf_buffer = generate_pdf(
-        df_cuts_flat=df_cuts_flat[["Código", "Barra #", "Cortes"]],
-        parts=parts,
-    )
-    st.download_button(
-        label="📥 Descargar lista de cortes",
-        data=pdf_buffer,
-        file_name="calculo_de_cortes.pdf",
-        mime="application/pdf"
-    )
-    
-    st.divider()
+        st.download_button(
+            label="📥 Descargar lista de cortes",
+            data=pdf_buffer,
+            file_name="calculo_de_cortes.pdf",
+            mime="application/pdf"
+        )
+        
     st.header("Kg a cobrar")
 
     ### RESUMEN LISTA DE CORTES ### 
