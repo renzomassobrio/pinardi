@@ -28,7 +28,7 @@ if "selection" not in st.session_state:
 
 st.title("PROYECTO PINARDI - Cotizaciones")
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🛒 Ingresar pedido", "📋 Combinar productos", "📏 Perfiles", "🔩 Accesorios", "🪟 Vidrios", "💰 Presupuestar"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🛒 Ingresar productos", "📋 Combinar productos", "📏 Perfiles", "🔩 Accesorios", "🪟 Vidrios", "💰 Presupuestar"])
 
 # ======================================================================
 # TAB 1 — CARRITO
