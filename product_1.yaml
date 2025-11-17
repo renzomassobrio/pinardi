@@ -1,0 +1,59 @@
+tipologia: GALA - Ventana o puerta corrediza 2 hojas en 2 rieles
+
+items_fijos:
+  - codigo: 93150
+    cantidad: 1
+    medida: A-36
+  - codigo: 93053
+    cantidad: 2
+    medida: H
+  - codigo: 0
+    cantidad: 10
+
+selecciones:
+  - nombre: Eleccion de marco
+    opciones: [93150, 93151, 93152]
+    cantidad: 1
+    medida: A-36
+  - nombre: Eleccion de hoja horizontal
+    opciones: [93005, 45032, 45036]
+    cantidad: 4
+    medida: A/2-23
+  - nombre: Eleccion de hoja lateral
+    opciones: [93007, 45031, 93012]
+    cantidad: 2
+  - nombre: Eleccion de hoja central
+    opciones: [93009, 45033, 93016, 93043, 93042, 93041]
+    cantidad: 2
+  - nombre: Eleccion de accesorio
+    opciones: [0,1]
+    cantidad: 2
+
+rules:
+  - condition:
+      selection: {"Eleccion de marco": "93150"}
+    actions:
+      - type: "update_measure"
+        target: "Eleccion de hoja lateral"
+        value: "H-65"
+      - type: "update_measure"
+        target: "Eleccion de hoja central"
+        value: "H-65"
+  - condition:
+      selection: {"Eleccion de marco": "93151"}
+    actions:
+      - type: "update_measure"
+        target: "Eleccion de hoja lateral"
+        value: "H-98"
+      - type: "update_measure"
+        target: "Eleccion de hoja central"
+        value: "H-98"
+  - condition:
+      selection: {"Eleccion de marco": "93152"}
+    actions:
+      - type: "update_measure"
+        target: "Eleccion de hoja lateral"
+        value: "H-138"
+      - type: "update_measure"
+        target: "Eleccion de hoja central"
+        value: "H-138"

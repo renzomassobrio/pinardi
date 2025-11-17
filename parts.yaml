@@ -1,0 +1,88 @@
+93150:
+  descripcion: "Marco Horizontal Superior - 2 rieles"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93151:
+  descripcion: "Marco Horizontal inferior caja de agua - 2 rieles"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93152:
+  descripcion: "Marco Horizontal inferior caja de agua - 2 rieles"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93005:
+  descripcion: "Hoja Horizontal Inferior y/o Superior para VS"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+45032:
+  descripcion: "Hoja Horizontal Inferior y/o Superior (63mm) para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+45036:
+  descripcion: "Hoja Horizontal Inferior y/o Superior (100mm) para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93007:
+  descripcion: "Hoja Lateral para VS"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+45031:
+  descripcion: "Hoja Lateral para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93012:
+  descripcion: "Hoja Lateral Reforzada para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93009:
+  descripcion: "Hoja Enganche Central para VS"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+45033:
+  descripcion: "Hoja Enganche Central para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93016:
+  descripcion: "Hoja Enganche Central Reforzada para VS"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93043:
+  descripcion: "Hoja Enganche Central Reforzada para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93042:
+  descripcion: "Hoja Enganche Central Reforzada para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93041:
+  descripcion: "Hoja Enganche Central Reforzada para DVH"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+93053:
+  descripcion: "Marco Lateral - 2 rieles"
+  kg/m: 0.9
+  largo: 6800
+  tipo: perfil
+0:
+  descripcion: "Accesorio de ejemplo 1"
+  precio: 10.0
+  tipo: accesorio
+1:
+  descripcion: "Accesorio de ejemplo 2"
+  precio: 20.0
+  tipo: accesorio
