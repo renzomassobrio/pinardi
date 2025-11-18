@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
-from functions import load_parts, load_product, get_available_decisions, build_bom_perfiles, build_bom_accesorios, get_product_by_name
+from functions import load_parts, load_product, get_available_decisions, build_bom_perfiles, build_bom_accesorios, get_product_by_name, render_product_card
 from cutting_stock import cutting_stock_with_kerf
 from pdf import generate_pdf
 import json
@@ -122,28 +122,10 @@ with tab1:
     st.divider()
     # Show basket
     if st.session_state.basket:
-        st.subheader("Pedido")
-        st.divider()
+        st.subheader("Productos agregados")
         for i, p in enumerate(st.session_state.basket):
             product = get_product_by_name(p["product_name"], products)
-            product_info_lines = [product["tipologia"]]
-            for option_name, choice in p["selection"].items():
-                product_info_lines.append(
-                    f"{option_name}: {choice} - {parts[choice]['descripcion']}"
-                )
-            product_info = "<br>".join(product_info_lines)
-
-            st.markdown(
-                f"**{p['description']}**<br>Ancho: {p['ancho']}<br>Alto: {p['alto']}<br>"
-                f"Cantidad: {p['cantidad']}<br>{product_info}",
-                unsafe_allow_html=True
-            )
-
-            if st.button("❌ Eliminar del pedido", key=f"remove_{i}"):
-                st.session_state.basket.pop(i)
-                st.rerun()
-
-            st.divider()
+            render_product_card(i, p, product, parts)
 
   
 # ======================================================================

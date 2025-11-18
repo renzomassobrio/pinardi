@@ -1,4 +1,59 @@
 import yaml
+import streamlit as st
+
+def render_product_card(index, item, product, parts):
+
+    col_card, col_delete = st.columns([10, 1])
+
+    with col_card:
+        options_html = ""
+        for option_name, choice in item["selection"].items():
+            opt_desc = parts[choice]["descripcion"]
+            options_html += f"""
+                <div style='margin-bottom:4px;'>
+                    <span style='font-weight:500;'>{option_name}:</span>
+                    <span>{choice} – {opt_desc}</span>
+                </div>
+            """
+
+        card_html = f"""
+        <div style="
+            border: 1px solid #DDD;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: #FAFAFA;
+            font-family: sans-serif;
+            color: #333;  /* FIXES COLOR INCONSISTENCIES */
+        ">
+            <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px;">
+                {item['description']}
+            </div>
+
+            <div style="margin-bottom: 8px;">
+                <strong>Tipología:</strong> {product['tipologia']}
+            </div>
+
+            <div style="display: flex; gap: 20px; margin-bottom: 10px;">
+                <div><strong>Ancho:</strong> {item['ancho']} mm</div>
+                <div><strong>Alto:</strong> {item['alto']} mm</div>
+                <div><strong>Cantidad:</strong> {item['cantidad']}</div>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <strong>Opciones seleccionadas:</strong>
+                <div>{options_html}</div>
+            </div>
+        </div>
+        """
+
+        st.html(card_html)
+
+    with col_delete:
+        if st.button("❌", key=f"remove_{index}"):
+            st.session_state.basket.pop(index)
+            st.rerun()
+
 
 def get_product_by_name(name: str, products: list):
     for p in products:
