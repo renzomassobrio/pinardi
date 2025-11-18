@@ -10,7 +10,7 @@ def load_parts(filepath: str):
     """Load parts.yaml into a dict with int codes as keys."""
     with open(filepath, "r", encoding="utf-8") as f:
         parts = yaml.safe_load(f)
-    return {int(k): v for k, v in parts.items()}
+    return {k: v for k, v in parts.items()}
 
 def load_product(filepath: str):
     """Load a product YAML (keeps codes as ints)."""
@@ -18,10 +18,10 @@ def load_product(filepath: str):
         product = yaml.safe_load(f)
 
     for sel in product.get("selecciones", []):
-        sel["opciones"] = [int(c) for c in sel["opciones"]]
+        sel["opciones"] = [c for c in sel["opciones"]]
 
     for item in product.get("items_fijos", []):
-        item["codigo"] = int(item["codigo"])
+        item["codigo"] = item["codigo"]
 
     return product
 
