@@ -1,7 +1,8 @@
 import pandas as pd
 from ortools.sat.python import cp_model
 
-def cutting_stock_with_kerf(stock_length, pieces, kerf=0.0):
+def cutting_stock_with_kerf(stock_length, pieces, kerf=0.0, edge_trim=0):
+    stock_length-=2*edge_trim # Descarte de puntas
     n_pieces = len(pieces)
     max_bars = n_pieces  # worst case: one piece per bar
     scale = 1000

@@ -63,9 +63,8 @@ with tab1:
     st.sidebar.divider()
     
     st.sidebar.write("## Opciones generales")
-    kerf = st.sidebar.number_input("🪚 Ancho de la hoja de corte (mm)", value=16, step=1, min_value=0, format="%d")
-    
-
+    kerf = st.sidebar.number_input("🪚 Ancho de la hoja de corte (mm)", value=5, step=1, min_value=0, format="%d")
+    descarte_punta=st.sidebar.number_input("🪚 Descarte de punta (mm, por lado)", value=50, step=1, min_value=0, format="%d")
 
     st.subheader("Agregar producto")
     
@@ -235,7 +234,7 @@ with tab3:
 
         res_cuts = []
         for k, v in to_cut.items():
-            bars, leftovers = cutting_stock_with_kerf(v["stock_length"], v["pieces"], kerf=kerf)
+            bars, leftovers = cutting_stock_with_kerf(v["stock_length"], v["pieces"], kerf=kerf, edge_trim=descarte_punta)
             res_cuts.append({
                 "codigo": k,
                 "total_barras": len(bars),
@@ -283,6 +282,13 @@ with tab3:
             file_name="calculo_de_cortes.pdf",
             mime="application/pdf"
         )
+        
+    # -------------------------------------------------------------
+    # LISTA DE PERFILES A PEDIR
+    # -------------------------------------------------------------
+    with st.expander("Lista de perfiles a comprar"):
+        df_perf_a_comprar=(df_cuts_flat.groupby(["Código"]).agg("count")["Barra #"])
+        st.dataframe(df_perf_a_comprar)
         
     st.header("Kg a cobrar")
 
