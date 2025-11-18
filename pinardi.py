@@ -69,9 +69,33 @@ with tab1:
     st.subheader("Agregar producto")
     
     description = st.text_input("Ingresar un nombre para el producto", placeholder="p.ej. ventana dormitorio")
-    ancho = st.number_input("Ingrese el ancho A (en mm)", value=0, step=1, min_value=0, format="%d")
-    alto = st.number_input("Ingrese el alto H (en mm)", value=0, step=1, min_value=0, format="%d")
-    cantidad = st.number_input("Ingrese la cantidad", value=1, step=1, min_value=1, format="%d")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        ancho = st.number_input(
+            "Ancho (mm)",
+            value=0,
+            step=1,
+            min_value=0,
+            format="%d"
+        )
+    with col2:
+        alto = st.number_input(
+            "Alto (mm)",
+            value=0,
+            step=1,
+            min_value=0,
+            format="%d"
+        )
+    with col3:
+        cantidad = st.number_input(
+            "Cantidad",
+            value=1,
+            step=1,
+            min_value=1,
+            format="%d"
+        )
+
     
     # Product selection
     selected_index = st.selectbox("Seleccionar tipologia", range(len(products)),
