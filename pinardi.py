@@ -339,6 +339,10 @@ with tab4:
                                                                         }).round(2), use_container_width=True)
 
     subtotal_accesorios = float(df_accesorios["precio total"].sum())
+    st.write(f"Suma accesorios: {subtotal_accesorios:.2f}")
+    
+    desc_accesorios = st.number_input("Descuento en accesorios (%)", min_value=0.0, max_value=100.0, value=25.0, step=1.0)
+    subtotal_accesorios -= subtotal_accesorios * desc_accesorios / 100
     st.write(f"**Subtotal accesorios: {subtotal_accesorios:.2f}**")
 
     # -------------------------------------------------------------
