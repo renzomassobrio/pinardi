@@ -321,7 +321,16 @@ with tab4:
     df_accesorios = df_accesorios[
         ["producto", "codigo", "descripcion", "cantidad", "precio unidad", "precio total"]
     ]
-    st.dataframe(df_accesorios.round(2), use_container_width=True)
+    
+    with st.expander("Lista individualizada"):
+        st.dataframe(df_accesorios.round(2), use_container_width=True)
+    
+    with st.expander("Lista agrupada por código"):
+        st.dataframe(df_accesorios.groupby(["codigo","descripcion"]).agg({
+                                                                            "cantidad": "sum",
+                                                                            "precio unidad": "first",
+                                                                            "precio total": "sum"
+                                                                        }).round(2), use_container_width=True)
 
     subtotal_accesorios = float(df_accesorios["precio total"].sum())
     st.write(f"**Subtotal accesorios: {subtotal_accesorios:.2f}**")
