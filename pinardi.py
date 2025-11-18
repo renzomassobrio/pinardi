@@ -161,7 +161,7 @@ with tab2:
         st.info("No hay productos en el pedido aún.")
         st.stop()
 
-    st.text("Seleccione productos del pedido")
+    st.text("Seleccione uno o más productos del pedido")
     
     selected_indices = []
     for i, item in enumerate(st.session_state.basket):
@@ -289,8 +289,8 @@ with tab3:
     
     ### RESUMEN LISTA DE CORTES ### 
     kg_usados = df_cuts_flat["kg. usados"].sum()
-    st.write(f"**⚖️ Kg. comprados:** {kg_comprados:.2f}")
-    st.write(f"**⚖️ Kg. usados:** {kg_usados:.2f}")
+    st.write(f"⚖️ **Kg. comprados:** {kg_comprados:.2f}")
+    st.write(f"⚖️ **Kg. usados:** {kg_usados:.2f}")
 
     col1, col2 = st.columns(2)
     with col1:
