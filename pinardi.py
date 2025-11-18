@@ -287,7 +287,7 @@ with tab3:
     # LISTA DE PERFILES A PEDIR
     # -------------------------------------------------------------
     with st.expander("Lista de perfiles a comprar"):
-        df_perf_a_comprar=(df_cuts_flat.groupby(["Código"]).agg("count")["Barra #"])
+        df_perf_a_comprar=(df_cuts_flat.groupby(["Código"]).agg("count")["Barra #"]).rename("Cantidad de barras")
         st.dataframe(df_perf_a_comprar)
         
     st.header("Kg a cobrar")
