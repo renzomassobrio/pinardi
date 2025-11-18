@@ -353,20 +353,37 @@ with tab6:
     # -------------------------------------------------------------
     # PRESUPUESTO FINAL
     # -------------------------------------------------------------
-    st.header("Presupuesto")
+    #st.header("Presupuesto")
 
-    perc_perfiles = st.number_input("Márgen perfiles (%)", min_value=0.0, max_value=100.0, value=0.0, step=1.0)
-    margen_perfiles = subtotal_perfiles * perc_perfiles / 100
+    st.subheader("Márgenes (%)")
 
-    perc_accesorios = st.number_input("Márgen accesorios (%)", min_value=0.0, max_value=100.0, value=0.0, step=1.0)
-    margen_accesorios = subtotal_accesorios * perc_accesorios / 100
-    
-    perc_vidrios = st.number_input("Márgen vidrios (%)", min_value=0.0, max_value=100.0, value=0.0, step=1.0)
-    margen_vidrios = subtotal_vidrios * perc_vidrios / 100
+    col1, col2, col3 = st.columns(3)
 
-    mano_obra = st.number_input("Mano de obra", value=0.0, format="%.2f")
-    insumos = st.number_input("Insumos", value=0.0, format="%.2f")
-    margen_adicional = st.number_input("Margen adicional", value=0.0, format="%.2f")
+    with col1:
+        perc_perfiles = st.number_input("Perfiles (%)", min_value=0.0, max_value=100.0, step=1.0)
+        margen_perfiles = subtotal_perfiles * perc_perfiles / 100
+
+    with col2:
+        perc_accesorios = st.number_input("Accesorios (%)", min_value=0.0, max_value=100.0, step=1.0)
+        margen_accesorios = subtotal_accesorios * perc_accesorios / 100
+
+    with col3:
+        perc_vidrios = st.number_input("Vidrios (%)", min_value=0.0, max_value=100.0, step=1.0)
+        margen_vidrios = subtotal_vidrios * perc_vidrios / 100
+
+
+    st.subheader("Costos adicionales")
+
+    colA, colB, colC = st.columns(3)
+
+    with colA:
+        mano_obra = st.number_input("Mano de obra", value=0.0, format="%.2f")
+
+    with colB:
+        insumos = st.number_input("Insumos", value=0.0, format="%.2f")
+
+    with colC:
+        margen_adicional = st.number_input("Margen adicional", value=0.0, format="%.2f")
 
     data = {
         "Concepto": [
@@ -405,6 +422,7 @@ with tab6:
     df["Multiplicador"] = df["Multiplicador"].map(lambda x: f"{x:.2f}")
     df["Total"] = df["Total"].map(lambda x: f"{x:.2f}")
 
+    st.divider()
     st.dataframe(df, hide_index=True)
 
     st.write(f"**💰 Total sin IVA:** {total_sin_iva:.2f}")
