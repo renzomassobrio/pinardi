@@ -161,7 +161,7 @@ with tab2:
         st.info("No hay productos en el pedido aún.")
         st.stop()
 
-    st.header("Seleccione productos del pedido")
+    st.text("Seleccione productos del pedido")
     
     selected_indices = []
     for i, item in enumerate(st.session_state.basket):
@@ -301,7 +301,6 @@ with tab4:
     # -------------------------------------------------------------
     # ACCESORIOS
     # -------------------------------------------------------------
-    st.header("Lista de accesorios")
 
     all_boms_accesorios = []
     for idx in selected_indices:
@@ -323,29 +322,44 @@ with tab4:
         ["producto", "codigo", "descripcion", "cantidad", "precio unidad", "precio total"]
     ]
     
-    with st.expander("Lista individualizada"):
+    with st.expander("Lista de accesorios individualizada"):
         st.dataframe(df_accesorios.round(2), use_container_width=True)
     
-    with st.expander("Lista agrupada por código"):
+    with st.expander("Lista de accesorios por código"):
         st.dataframe(df_accesorios.groupby(["codigo","descripcion"]).agg({
                                                                             "cantidad": "sum",
                                                                             "precio unidad": "first",
                                                                             "precio total": "sum"
                                                                         }).round(2), use_container_width=True)
 
-    subtotal_accesorios = float(df_accesorios["precio total"].sum())
-    st.write(f"Suma accesorios: {subtotal_accesorios:.2f}")
-    
-    desc_accesorios = st.number_input("Descuento en accesorios (%)", min_value=0.0, max_value=100.0, value=25.0, step=1.0)
-    subtotal_accesorios -= subtotal_accesorios * desc_accesorios / 100
-    st.write(f"**Subtotal accesorios: {subtotal_accesorios:.2f}**")
+    # Cálculo inicial
+    subtotal_accesorios_bruto = float(df_accesorios["precio total"].sum())
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.write(f"Suma accesorios (antes de descuento):\n\n ${subtotal_accesorios_bruto:,.2f}")
+
+    with col2:
+        desc_accesorios = st.number_input(
+            "Descuento (%)",
+            min_value=0.0,
+            max_value=100.0,
+            value=25.0,
+            step=1.0,
+        )
+
+    # Calcular subtotal con descuento
+    subtotal_accesorios = subtotal_accesorios_bruto * (1 - desc_accesorios / 100)
+
+    st.write(f"### Subtotal accesorios: ${subtotal_accesorios:,.2f}")
+
 
     # -------------------------------------------------------------
     # VIDRIOS
     # -------------------------------------------------------------
 
 with tab5:
-    st.header("Vidrios")
     subtotal_vidrios=st.number_input("Costo vidrios", value=0.0, format="%.2f")
 
 
@@ -353,7 +367,6 @@ with tab6:
     # -------------------------------------------------------------
     # PRESUPUESTO FINAL
     # -------------------------------------------------------------
-    #st.header("Presupuesto")
 
     st.subheader("Márgenes (%)")
 
