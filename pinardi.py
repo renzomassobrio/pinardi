@@ -285,17 +285,35 @@ with tab3:
         df_perf_a_comprar=(df_cuts_flat.groupby(["Código"]).agg("count")["Barra #"]).rename("Cantidad de barras")
         st.dataframe(df_perf_a_comprar)
         
-    st.header("Kg a cobrar")
-
+    st.divider()
+    
     ### RESUMEN LISTA DE CORTES ### 
     kg_usados = df_cuts_flat["kg. usados"].sum()
-    st.write(f"**⚖️ Kg. comprados: {kg_comprados:.2f}**")
-    st.write(f"**⚖️ Kg. usados: {kg_usados:.2f}**")
+    st.write(f"**⚖️ Kg. comprados:** {kg_comprados:.2f}")
+    st.write(f"**⚖️ Kg. usados:** {kg_usados:.2f}")
 
-    kilos_a_cobrar = st.number_input("Ingrese la cantidad de kg a cobrar", value=0.0, format="%.2f")
-    precio_kilo = st.number_input("Ingrese el precio por kg", value=0.0, format="%.2f")
+    col1, col2 = st.columns(2)
+    with col1:
+        kilos_a_cobrar = st.number_input(
+            "Kg a cobrar",
+            min_value=0.0,
+            value=0.0,
+            step=0.1,
+            format="%.2f"
+        )
+
+    with col2:
+        precio_kilo = st.number_input(
+            "Precio por kg",
+            min_value=0.0,
+            value=0.0,
+            step=0.1,
+            format="%.2f"
+        )
+
     subtotal_perfiles = kilos_a_cobrar * precio_kilo
-    st.write(f"**Subtotal perfiles: {subtotal_perfiles}**")
+
+    st.write(f"### Subtotal perfiles: ${subtotal_perfiles:,.2f}")
 
 with tab4:
     # -------------------------------------------------------------
