@@ -432,12 +432,14 @@ with tab6:
     }
     df = pd.DataFrame(data)
 
+    st.subheader("IVA")
     iva_option = st.radio(
-        "Aplicar IVA:",
-        ("IVA a todo", "IVA solo compras")
+        "",
+        ("a todo", "solo a compras"),
+        label_visibility="collapsed"
     )
 
-    if iva_option == "IVA a todo":
+    if iva_option == "a todo":
         df["Multiplicador"] = 1.22
     else:
         df["Multiplicador"] = df["Concepto"].apply(
