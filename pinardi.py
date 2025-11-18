@@ -100,13 +100,6 @@ with tab1:
             st.session_state.selection[nombre] = int(chosen)
         else:
             st.session_state.selection.pop(nombre, None)
-            
-    # Validate fully selected
-    all_selected = all(
-        nombre in st.session_state.selection
-        and st.session_state.selection[nombre] != ""
-        for nombre in available.keys()
-    )
 
     # Add to basket
     if st.button("🛒➕ Agregar al pedido"):
@@ -114,10 +107,6 @@ with tab1:
             st.warning("⚠️ Debe ingresar un nombre para el producto.")
         elif any(d["description"] == description for d in st.session_state.basket):
             st.warning("⚠️ El nombre del producto ya está en uso.")
-        elif not st.session_state.selection:
-            st.warning("⚠️ Debe configurar el producto primero.")
-        elif not all_selected:
-            st.warning("⚠️ Selecciona una opción en todos los menús desplegables antes de continuar.")
         else:
             st.session_state.basket.append({
                 "description": description,
