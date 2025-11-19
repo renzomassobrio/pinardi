@@ -36,25 +36,25 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🛒 Ingresar productos", "📋 C
 with tab1:
 
     #### SIDEBAR
-    st.sidebar.write("## Descargar/Cargar pedido")
+    st.sidebar.write("## Importar/Exportar")
 
     # Download button
     cart_json = json.dumps(st.session_state.basket, ensure_ascii=False, indent=4)
     st.sidebar.download_button(
-    label="💾 Descargar pedido",
+    label="💾 Descargar productos",
     data=cart_json,
     file_name="basket.json",
     mime="application/json"
     )
     
     #Upload button
-    uploaded_cart = st.sidebar.file_uploader("📂 Cargar pedido", type=["json"], key="cart_upload")
+    uploaded_cart = st.sidebar.file_uploader("📂 Cargar productos", type=["json"], key="cart_upload")
     
     if uploaded_cart is not None and not st.session_state.get("cart_processed"):
         data = json.load(uploaded_cart)
         st.session_state.basket = data
         st.session_state.cart_processed = True
-        st.sidebar.success("Pedido cargado desde archivo")
+        st.sidebar.success("Productos cargados desde archivo")
         st.rerun()
 
     if uploaded_cart is None and st.session_state.get("cart_processed"):
@@ -285,35 +285,40 @@ with tab3:
         df_perf_a_comprar=(df_cuts_flat.groupby(["Código"]).agg("count")["Barra #"]).rename("Cantidad de barras")
         st.dataframe(df_perf_a_comprar)
         
-    st.divider()
     
     ### RESUMEN LISTA DE CORTES ### 
     kg_usados = df_cuts_flat["kg. usados"].sum()
-    st.write(f"⚖️ **Kg. comprados:** {kg_comprados:.2f}")
-    st.write(f"⚖️ **Kg. usados:** {kg_usados:.2f}")
+
 
     col1, col2 = st.columns(2)
+
     with col1:
+        st.metric("⚖️ Kg comprados", f"{kg_comprados:,.2f}")
         kilos_a_cobrar = st.number_input(
-            "Kg a cobrar",
+            "📥 Kg a cobrar",
             min_value=0.0,
             value=0.0,
-            step=0.1,
-            format="%.2f"
+            step=0.10,
+            format="%.2f",
+            help="Cantidad de kilos que se van a cobrar."
         )
 
     with col2:
+        st.metric("⚖️ Kg usados", f"{kg_usados:,.2f}")
         precio_kilo = st.number_input(
-            "Precio por kg",
+            "💲 Precio por kg",
             min_value=0.0,
             value=0.0,
-            step=0.1,
-            format="%.2f"
+            step=0.10,
+            format="%.2f",
+            help="Costo por cada kilo."
         )
 
     subtotal_perfiles = kilos_a_cobrar * precio_kilo
 
-    st.write(f"### Subtotal perfiles: ${subtotal_perfiles:,.2f}")
+    st.markdown("---")
+    st.markdown(f"### 🧾 Subtotal perfiles: **${subtotal_perfiles:,.2f}**")
+
 
 with tab4:
     # -------------------------------------------------------------
@@ -356,21 +361,25 @@ with tab4:
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.write(f"Suma accesorios (antes de descuento):\n\n ${subtotal_accesorios_bruto:,.2f}")
+        st.markdown(
+            f"💵 **Suma accesorios:** ${subtotal_accesorios_bruto:,.2f}"
+        )
 
     with col2:
         desc_accesorios = st.number_input(
-            "Descuento (%)",
+            "🎯 Descuento (%)",
             min_value=0.0,
             max_value=100.0,
             value=25.0,
             step=1.0,
+            help="Porcentaje de descuento aplicado a los accesorios."
         )
 
     # Calcular subtotal con descuento
     subtotal_accesorios = subtotal_accesorios_bruto * (1 - desc_accesorios / 100)
 
-    st.write(f"### Subtotal accesorios: ${subtotal_accesorios:,.2f}")
+    st.markdown("---")
+    st.markdown(f"### 🧾 Subtotal accesorios: **${subtotal_accesorios:,.2f}**")
 
 
     # -------------------------------------------------------------
@@ -458,6 +467,12 @@ with tab6:
     st.divider()
     st.dataframe(df, hide_index=True)
 
-    st.write(f"**💰 Total sin IVA:** {total_sin_iva:.2f}")
-    st.write(f"**💰 Total IVA incluido:** {total_iva_incluido:.2f}")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("💰 Total sin IVA", f"{total_sin_iva:,.2f}")
+
+    with col2:
+        st.metric("💰 Total IVA incluido", f"{total_iva_incluido:,.2f}")
+
 
