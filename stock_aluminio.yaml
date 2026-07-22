@@ -6,9 +6,6 @@ barras:
   codigo: 93150
   largo: 5800
 - posicion: estante 2
-  codigo: 3000
-  largo: 2000
-- posicion: estante 2
   codigo: 93150
   largo: 6000
 - posicion: estante 2
@@ -17,3 +14,6 @@ barras:
 - posicion: estante 3
   codigo: 93150
   largo: 4500
+- posicion: estante 4
+  codigo: 3000
+  largo: 2000
