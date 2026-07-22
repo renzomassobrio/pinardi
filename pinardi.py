@@ -114,7 +114,7 @@ with tab1:
 
         chosen = st.selectbox(
             f"{nombre}",
-            options=[""] + list(options_labels.keys()),
+            options=list(options_labels.keys()),
             format_func=lambda x: options_labels.get(x, "") if x else "Seleccionar...",
             key=f"select_{nombre}",
             index=0

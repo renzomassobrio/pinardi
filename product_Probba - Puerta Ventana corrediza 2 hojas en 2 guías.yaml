@@ -1,0 +1,90 @@
+tipologia: GALA - Puerta Ventana Corrediza de 2 hojas en 2 guías para VS
+
+items_fijos:
+  - codigo: 90120
+    cantidad: 2
+    medida: A-36
+  - codigo: 90021
+    cantidad: 2
+    medida: H
+  - codigo: 90025
+    cantidad: 4
+    medida: A/2-23
+  - codigo: 90027
+    cantidad: 2
+    medida: H-65
+  - codigo: 90028
+    cantidad: 2
+    medida: H-65
+  - codigo: AGZ3054
+    cantidad: 2
+  - codigo: AGG5600
+    cantidad: 4
+  - codigo: AGU3574
+    cantidad: 4
+
+selecciones:
+  - nombre: Eleccion de marco
+    opciones: [93150, 93151, 93152]
+    cantidad: 1
+    medida: A-36
+  - nombre: Eleccion de hoja horizontal
+    opciones: [93005, 45032, 45036]
+    cantidad: 4
+    medida: A/2-23
+  - nombre: Eleccion de hoja lateral
+    opciones: [93007, 45031, 93012]
+    cantidad: 2
+  - nombre: Eleccion de hoja central
+    opciones: [93009, 45033, 93016, 93043, 93042, 93041]
+    cantidad: 2
+  - nombre: Eleccion de cierre
+    opciones: [NGG2114,NUU2504,NUU2514,NUU2604,AMD6244,AMD6344,AMZ6344]
+    cantidad: 2
+  - nombre: Eleccion de tirador lateral
+    opciones: [AGG6524,AMD6544,AMD6554,AMD6564,AMU6514,AMU6574,AMU6594]
+    cantidad: 2
+  - nombre: Eleccion de rueda
+    opciones: [AGF1010,AGF1020,APD1000,AGG1060,APC1000,APC1010]
+    cantidad: 4
+  - nombre: Eleccion de rueda
+    opciones: [AMA8714,AMA8734,AMA8744,AMA875]
+    cantidad: 2*A+4*H
+  - nombre: Eleccion de rueda
+    opciones: [AMA8714,AMA8734,AMA8744,AMA875]
+    cantidad: 2*A+4*H
+  - nombre: Eleccion de felpilla
+    opciones: [AMS7157,AMS7227]
+    cantidad: 4*A+6*H
+  - nombre: Eleccion de felpilla
+    opciones: [AMS7157,AMS7227]
+    cantidad: 4*A+6*H
+
+rules:
+  - condition:
+      selection: {"Eleccion de marco": "93150"}
+    actions:
+      - type: "update_measure"
+        target: "Eleccion de hoja lateral"
+        value: "H-65"
+      - type: "update_measure"
+        target: "Eleccion de hoja central"
+        value: "H-65"
+  - condition:
+      selection: {"Eleccion de marco": "93151"}
+    actions:
+      - type: "update_measure"
+        target: "Eleccion de hoja lateral"
+        value: "H-98"
+      - type: "update_measure"
+        target: "Eleccion de hoja central"
+        value: "H-98"
+  - condition:
+      selection: {"Eleccion de marco": "93152"}
+    actions:
+      - type: "update_measure"
+        target: "Eleccion de hoja lateral"
+        value: "H-138"
+      - type: "update_measure"
+        target: "Eleccion de hoja central"
+        value: "H-138"
