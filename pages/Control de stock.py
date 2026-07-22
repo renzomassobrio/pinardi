@@ -20,11 +20,16 @@ stock, sha = load_stock()
 
 df_stock = pd.DataFrame(stock)
 
+if not df_stock.empty:
+    df_stock = df_stock.sort_values(
+        by=["posicion", "codigo"],
+        ascending=[True, True]
+    ).reset_index(drop=True)
+
 if df_stock.empty:
     df_stock = pd.DataFrame(
         columns=["posicion", "codigo", "largo"]
     )
-
 # -------------------------------------------------
 # Editable table
 # -------------------------------------------------
@@ -83,6 +88,11 @@ if st.button("💾 Guardar cambios"):
 
     else:
         try:
+            edited_df = edited_df.sort_values(
+                by=["posicion", "codigo"],
+                ascending=[True, True]
+            )
+
             save_stock(
                 edited_df.to_dict("records"),
                 sha,
