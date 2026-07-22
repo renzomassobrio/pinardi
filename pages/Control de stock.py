@@ -3,7 +3,6 @@ import pandas as pd
 
 from functions import load_stock, save_stock
 
-
 st.set_page_config(
     page_title="Stock aluminio",
     page_icon="📦"
@@ -17,21 +16,14 @@ st.title("📦 Stock aluminio")
 # Load stock
 # -------------------------------------------------
 
-stock = load_stock()
-
+stock, sha = load_stock()
 
 df_stock = pd.DataFrame(stock)
 
-
 if df_stock.empty:
     df_stock = pd.DataFrame(
-        columns=[
-            "posicion",
-            "codigo",
-            "largo"
-        ]
+        columns=["posicion", "codigo", "largo"]
     )
-
 
 # -------------------------------------------------
 # Editable table
@@ -67,37 +59,40 @@ if st.button("💾 Guardar cambios"):
 
     errors = []
 
-    # Validate empty positions
-    if edited_df["posicion"].isna().any() or (edited_df["posicion"].astype(str).str.strip() == "").any():
+    if edited_df["posicion"].isna().any() or (
+        edited_df["posicion"].astype(str).str.strip() == ""
+    ).any():
         errors.append("❌ Hay barras sin posición.")
 
-    # Validate codigo integer
     try:
         edited_df["codigo"] = edited_df["codigo"].astype(int)
     except Exception:
         errors.append("❌ El código debe ser un número entero.")
 
-    # Validate largo integer
     try:
         edited_df["largo"] = edited_df["largo"].astype(int)
     except Exception:
         errors.append("❌ El largo debe ser un número entero.")
 
-    # Validate positive lengths
     if (edited_df["largo"] <= 0).any():
         errors.append("❌ El largo debe ser mayor que cero.")
 
     if errors:
-        for error in errors:
-            st.error(error)
+        for e in errors:
+            st.error(e)
 
     else:
-        new_stock = edited_df.to_dict(
-            orient="records"
-        )
+        try:
+            save_stock(
+                edited_df.to_dict("records"),
+                sha,
+            )
 
-        save_stock(new_stock)
+            st.success("✅ Stock actualizado correctamente.")
 
-        st.success("✅ Stock actualizado correctamente.")
+            st.rerun()
 
-        st.rerun()
+        except Exception as e:
+            st.error(
+                f"No se pudo guardar el archivo en GitHub.\n\n{e}"
+            )

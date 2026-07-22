@@ -1,5 +1,8 @@
 import yaml
 import streamlit as st
+from github import Github
+
+STOCK_FILE = "stock_aluminio.yaml"
 
 def render_product_card(index, item, product, parts):
 
@@ -169,18 +172,73 @@ def build_bom_accesorios(user_selection, product, parts):
                 })
     return bom
 
-def load_stock(filename="stock_aluminio.yaml"):
-    with open(filename, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
+import yaml
+import streamlit as st
+from github import Github
 
-    return data.get("barras", [])
+STOCK_FILE = "stock_aluminio.yaml"
 
 
-def save_stock(stock, filename="stock_aluminio.yaml"):
-    with open(filename, "w", encoding="utf-8") as f:
-        yaml.dump(
-            {"barras": stock},
-            f,
-            sort_keys=False,
-            allow_unicode=True
-        )
+def get_repo():
+    """Return the GitHub repository object."""
+    github = Github(st.secrets["GITHUB_TOKEN"])
+    return github.get_repo(st.secrets["GITHUB_REPO"])
+
+
+@st.cache_data(ttl=30)
+def load_stock():
+    """
+    Load stock from GitHub.
+
+    Returns:
+        stock (list): List of bars.
+        sha (str): SHA of the file currently in GitHub.
+    """
+    repo = get_repo()
+
+    branch = st.secrets.get("GITHUB_BRANCH", "main")
+
+    file = repo.get_contents(STOCK_FILE, ref=branch)
+
+    data = yaml.safe_load(
+        file.decoded_content.decode("utf-8")
+    )
+
+    if data is None:
+        data = {}
+
+    return data.get("barras", []), file.sha
+
+
+def save_stock(stock, sha):
+    """
+    Save stock to GitHub.
+
+    Parameters
+    ----------
+    stock : list
+        List of dictionaries describing the bars.
+    sha : str
+        SHA returned by load_stock().
+    """
+
+    repo = get_repo()
+
+    branch = st.secrets.get("GITHUB_BRANCH", "main")
+
+    yaml_content = yaml.dump(
+        {"barras": stock},
+        sort_keys=False,
+        allow_unicode=True,
+    )
+
+    repo.update_file(
+        path=STOCK_FILE,
+        message="Actualizar stock de aluminio",
+        content=yaml_content,
+        sha=sha,
+        branch=branch,
+    )
+
+    # Refresh cache after successful save
+    load_stock.clear()
