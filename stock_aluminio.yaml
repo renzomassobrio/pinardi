@@ -17,3 +17,6 @@ barras:
 - posicion: estante 3
   codigo: 93254
   largo: 2500
+- posicion: estante 4
+  codigo: 3333
+  largo: 2222
