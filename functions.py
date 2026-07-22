@@ -169,3 +169,18 @@ def build_bom_accesorios(user_selection, product, parts):
                 })
     return bom
 
+def load_stock(filename="stock_aluminio.yaml"):
+    with open(filename, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+
+    return data.get("barras", [])
+
+
+def save_stock(stock, filename="stock_aluminio.yaml"):
+    with open(filename, "w", encoding="utf-8") as f:
+        yaml.dump(
+            {"barras": stock},
+            f,
+            sort_keys=False,
+            allow_unicode=True
+        )
