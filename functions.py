@@ -172,12 +172,6 @@ def build_bom_accesorios(user_selection, product, parts):
                 })
     return bom
 
-import yaml
-import streamlit as st
-from github import Github
-
-STOCK_FILE = "stock_aluminio.yaml"
-
 
 def get_repo():
     """Return the GitHub repository object."""
