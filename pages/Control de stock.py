@@ -3,13 +3,12 @@ import pandas as pd
 
 from functions import load_stock, save_stock
 
+
 st.set_page_config(
-    page_title="Stock aluminio",
-    page_icon="📦"
+    page_title="PROYECTO PINARDI",
 )
 
-
-st.title("📦 Stock aluminio")
+st.title("PROYECTO PINARDI - Control de stock")
 
 
 # -------------------------------------------------
@@ -34,8 +33,19 @@ if df_stock.empty:
 # Editable table
 # -------------------------------------------------
 
-st.subheader("Barras disponibles")
+st.subheader("Barras en stock")
 
+with st.expander("📖 Instrucciones"):
+    st.info(    """
+    **Instrucciones:**
+    - Haga doble clic en una celda para editar su contenido.
+    - Para agregar una nueva barra, use la fila vacía al final de la tabla.
+    - - Para eliminar una o varias barras:
+        1. Marque la casilla de selección (✓) situada a la izquierda de cada fila que desea eliminar.
+        2. Haga clic en el icono **🗑** situado en la esquina superior derecha de la tabla.
+    - Cuando termine de editar, haga clic en **💾 Guardar cambios**.
+    """
+    )
 
 edited_df = st.data_editor(
     df_stock,

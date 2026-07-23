@@ -1,11 +1,15 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
-from functions import load_parts, load_product, get_available_decisions, build_bom_perfiles, build_bom_accesorios, get_product_by_name, render_product_card
+from functions import load_parts, load_product, get_available_decisions, build_bom_perfiles, build_bom_accesorios, get_product_by_name, render_product_card, load_stock
 from cutting_stock import cutting_stock_with_kerf
 from pdf import generate_pdf
 import json
 from io import StringIO
+
+st.set_page_config(
+    page_title="PROYECTO PINARDI",
+)
 
 # --- Load parts ---
 parts = load_parts("parts.yaml")
