@@ -20,3 +20,6 @@ barras:
 - posicion: estante 5
   codigo: 3200
   largo: 2000
+- posicion: sdf
+  codigo: 0
+  largo: 22
