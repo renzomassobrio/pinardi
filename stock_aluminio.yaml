@@ -17,6 +17,3 @@ barras:
 - posicion: estante 4
   codigo: 3000
   largo: 2000
-- posicion: estante 5
-  codigo: 1234
-  largo: 2000
